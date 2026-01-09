@@ -35,8 +35,8 @@ const correosPremium = [
 /************ DATOS DE DONACIONES ************/
 const contactoDonaciones = {
     yapeQR: "https://i.ibb.co/mF99V38X/Whats-App-Image-2026-01-09-at-2-06-26-PM.jpg",
-    celular: "51977247092",
-    montoPremium: 15,
+    celular: "59177247092",  // ← CÓDIGO 591 (Bolivia)
+    montoPremium: 15,        // ← Bs 15 (Bolivianos)
     correoContacto: "yerzinsinka7@gmail.com"
 };
 
@@ -627,48 +627,17 @@ function finishExam() {
     }
 }
 
-/************ MOSTRAR RESULTADOS GRATIS ************/
+/************ MOSTRAR RESULTADOS GRATIS (SOLO NOTA FINAL) ************/
 function mostrarResultadosGratis(notaFinal, notaColor, correctasTotales, totalPreguntas, secciones) {
     examContainer.innerHTML = `
         <div class="results-summary">
             <h2><i class="fas fa-trophy"></i> ¡Examen Finalizado!</h2>
-            <div class="final-score" style="color: ${notaColor};">${notaFinal}</div>
-            <p style="font-size: 1.2rem; margin-bottom: 10px;">Nota Final / 100</p>
-            <p><strong>${correctasTotales}</strong> respuestas correctas de <strong>${totalPreguntas}</strong> preguntas</p>
+            <div class="final-score" style="color: ${notaColor}; font-size: 5rem; margin: 20px 0;">${notaFinal}</div>
+            <p style="font-size: 1.3rem; margin-bottom: 10px;">Nota Final / 100</p>
+            <p style="font-size: 1.1rem;"><strong>${correctasTotales}</strong> respuestas correctas de <strong>${totalPreguntas}</strong> preguntas</p>
             <p style="margin-top: 10px;"><i class="fas fa-clock"></i> Tiempo restante: ${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}</p>
         </div>
 
-        <h3 style="text-align: center; margin: 40px 0 20px; color: #2c3e50;">
-            <i class="fas fa-chart-bar"></i> Resultados por Sección
-        </h3>
-        
-        <div class="section-stats">
-            ${Object.keys(secciones).map(sec => {
-        const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
-        let colorBarra = "#e74c3c";
-        if (porcentaje >= 60) colorBarra = "#f39c12";
-        if (porcentaje >= 70) colorBarra = "#3498db";
-        if (porcentaje >= 80) colorBarra = "#2ecc71";
-
-        return `
-                <div class="stat-card">
-                    <h3>${sec}</h3>
-                    <div class="score">${secciones[sec].correctas}/${secciones[sec].total}</div>
-                    <div class="percentage">${porcentaje}% de acierto</div>
-                    <div class="progress-bar" style="margin-top: 15px; height: 8px;">
-                        <div class="progress-fill" style="width: ${porcentaje}%; background: ${colorBarra}"></div>
-                    </div>
-                </div>
-                `;
-    }).join("")}
-        </div>
-
-        <button onclick="mostrarDetalleRespuestas()" class="details-toggle" id="toggleDetails">
-            <i class="fas fa-eye"></i> Ver detalle de respuestas (solo nota)
-        </button>
-        
-        <div id="detalleRespuestas" style="display: none;"></div>
-        
         <!-- PANEL DE PREMIUM PARA USUARIOS GRATIS -->
         ${mostrarMensajePremium()}
         
@@ -676,20 +645,20 @@ function mostrarResultadosGratis(notaFinal, notaColor, correctasTotales, totalPr
             <button onclick="reiniciarExamenCompleto()" class="action-btn restart-btn">
                 <i class="fas fa-redo"></i> Reiniciar Examen
             </button>
-            <button onclick="descargarResultados()" class="action-btn download-btn">
+            <button onclick="descargarResultadosBasicos()" class="action-btn download-btn">
                 <i class="fas fa-download"></i> Descargar Resultados
             </button>
         </div>
     `;
 }
 
-/************ MOSTRAR RESULTADOS PREMIUM ************/
+/************ MOSTRAR RESULTADOS PREMIUM (COMPLETO) ************/
 function mostrarResultadosPremium(notaFinal, notaColor, correctasTotales, totalPreguntas, secciones) {
     examContainer.innerHTML = `
         <div class="results-summary">
             <h2><i class="fas fa-crown"></i> ¡Examen Finalizado - VERSIÓN PREMIUM!</h2>
-            <div class="final-score" style="color: ${notaColor}; border: 3px solid #FFD700;">${notaFinal}</div>
-            <p style="font-size: 1.2rem; margin-bottom: 10px;">Nota Final / 100</p>
+            <div class="final-score" style="color: ${notaColor}; border: 3px solid #FFD700; font-size: 5rem;">${notaFinal}</div>
+            <p style="font-size: 1.3rem; margin-bottom: 10px;">Nota Final / 100</p>
             <p><strong>${correctasTotales}</strong> respuestas correctas de <strong>${totalPreguntas}</strong> preguntas</p>
             <p style="margin-top: 10px;"><i class="fas fa-clock"></i> Tiempo restante: ${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}</p>
         </div>
@@ -706,7 +675,6 @@ function mostrarResultadosPremium(notaFinal, notaColor, correctasTotales, totalP
         if (porcentaje >= 70) colorBarra = "#3498db";
         if (porcentaje >= 80) colorBarra = "#2ecc71";
 
-        // Para premium, añadimos estadísticas detalladas
         const preguntasSeccion = respuestasUsuario.filter(r => r.categoria === sec);
         const errores = preguntasSeccion.filter(r => !r.correcta).length;
 
@@ -746,50 +714,6 @@ function mostrarResultadosPremium(notaFinal, notaColor, correctasTotales, totalP
             </button>
         </div>
     `;
-}
-
-/************ MOSTRAR DETALLE DE RESPUESTAS (GRATIS) ************/
-function mostrarDetalleRespuestas() {
-    const detalleDiv = document.getElementById("detalleRespuestas");
-    const toggleBtn = document.getElementById("toggleDetails");
-
-    if (detalleDiv.style.display === "none") {
-        detalleDiv.innerHTML = `
-            <h3 style="text-align: center; margin: 40px 0 20px; color: #2c3e50;">
-                <i class="fas fa-list-check"></i> Detalle de Respuestas (${respuestasUsuario.length} preguntas)
-            </h3>
-            <div class="details-container">
-                ${respuestasUsuario.map((r, index) => {
-            const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ?
-                r.opciones[r.seleccion] : "No registrada";
-            const esCorrecta = r.correcta;
-
-            return `
-                    <div class="answer-item ${esCorrecta ? 'correct' : 'incorrect'}">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <strong style="font-size: 1.1rem;">Pregunta ${index + 1}: ${r.categoria}</strong>
-                            <span style="font-weight: bold; color: ${esCorrecta ? '#27ae60' : '#c0392b'}">
-                                ${esCorrecta ? '✓ Correcta' : '✗ Incorrecta'}
-                            </span>
-                        </div>
-                        <p><strong>Área:</strong> ${r.subcategoria || r.materia || "Sin categoría"}</p>
-                        <p><strong>Tu respuesta:</strong> ${textoSeleccionado}</p>
-                        ${!esCorrecta ? `<p style="margin-top: 5px; color: #c0392b;"><strong>🔒 Respuesta correcta bloqueada</strong> (solo disponible en versión Premium)</p>` : ''}
-                    </div>
-                    `;
-        }).join("")}
-            </div>
-        `;
-        detalleDiv.style.display = "block";
-        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar detalle de respuestas';
-        toggleBtn.style.background = "#667eea";
-        toggleBtn.style.color = "white";
-    } else {
-        detalleDiv.style.display = "none";
-        toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Ver detalle de respuestas (solo nota)';
-        toggleBtn.style.background = "transparent";
-        toggleBtn.style.color = "#667eea";
-    }
 }
 
 /************ MOSTRAR DETALLE DE RESPUESTAS PREMIUM ************/
@@ -836,7 +760,7 @@ function mostrarDetalleRespuestasPremium() {
             </div>
             
             <div style="margin-top: 30px; padding: 20px; background: #E3F2FD; border-radius: 10px;">
-                <h4><i class="fasfa-chart-line"></i> ESTADÍSTICAS AVANZADAS PREMIUM</h4>
+                <h4><i class="fas fa-chart-line"></i> ESTADÍSTICAS AVANZADAS PREMIUM</h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
                     <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
                         <div style="font-size: 1.5em; font-weight: bold; color: #2E7D32;">${respuestasUsuario.filter(r => r.correcta).length}</div>
@@ -865,6 +789,55 @@ function mostrarDetalleRespuestasPremium() {
     }
 }
 
+/************ PUNTO 3: DESCARGAR RESULTADOS BÁSICOS ************/
+function descargarResultadosBasicos() {
+    let correctasTotales = respuestasUsuario.filter(r => r.correcta).length;
+    let totalPreguntas = respuestasUsuario.length;
+    let notaFinal = totalPreguntas > 0 ? (correctasTotales / totalPreguntas * 100).toFixed(2) : "0.00";
+    
+    let contenido = `
+EXAMEN SIMULADOR - RESULTADO BÁSICO
+===================================
+Fecha: ${new Date().toLocaleDateString()}
+Hora: ${new Date().toLocaleTimeString()}
+Nota Final: ${notaFinal}/100
+Correctas: ${correctasTotales} de ${totalPreguntas}
+Tiempo restante: ${Math.floor(totalTime/60)}:${(totalTime%60).toString().padStart(2,'0')}
+
+¿QUIERES RESULTADOS COMPLETOS?
+===============================
+Con la versión PREMIUM obtienes:
+
+✓ Resultados por sección
+✓ Respuestas correctas detalladas  
+✓ Tus errores con explicación
+✓ Estadísticas por área avanzadas
+✓ Reporte premium descargable
+
+PRECIO: Bs ${contactoDonaciones.montoPremium}.00
+
+CONTACTO:
+---------
+📱 WhatsApp: ${contactoDonaciones.celular}
+📧 Correo: ${contactoDonaciones.correoContacto}
+💳 Yape: ${contactoDonaciones.celular}
+
+¡Gracias por usar el simulador!
+`;
+
+    const blob = new Blob([contenido], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `resultado_examen_${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert("Resultados básicos descargados. ¡Obtén Premium para ver análisis completo!");
+}
+
 /************ FUNCIONES PREMIUM ************/
 function mostrarMensajePremium() {
     return `
@@ -883,20 +856,20 @@ function mostrarMensajePremium() {
                 <div style="background: white; padding: 15px; border-radius: 10px;">
                     <strong>✅ Lo que ves ahora (GRATIS):</strong>
                     <ul style="margin: 10px 0; padding-left: 20px;">
-                        <li>Nota final</li>
-                        <li>Resumen general por sección</li>
-                        <li>Correctas/Incorrectas (sin detalles)</li>
+                        <li>Nota final (${respuestasUsuario.filter(r => r.correcta).length}/${respuestasUsuario.length})</li>
+                        <li>Solo el número de nota</li>
+                        <li>Sin ver tus errores</li>
                     </ul>
                 </div>
                 
                 <div style="background: #F1F8E9; padding: 15px; border-radius: 10px;">
-                    <strong>💎 Lo que obtienes con PREMIUM (S/ ${contactoDonaciones.montoPremium}):</strong>
+                    <strong>💎 Lo que obtienes con PREMIUM (Bs ${contactoDonaciones.montoPremium}.00):</strong>
                     <ul style="margin: 10px 0; padding-left: 20px;">
-                        <li>Respuestas correctas detalladas</li>
-                        <li>Tus errores con explicación</li>
-                        <li>Estadísticas por área avanzadas</li>
-                        <li>Análisis de efectividad</li>
-                        <li>Reporte premium descargable</li>
+                        <li>📊 Resultados por sección</li>
+                        <li>✅ Respuestas correctas detalladas</li>
+                        <li>❌ Tus errores con explicación</li>
+                        <li>📈 Estadísticas por área avanzadas</li>
+                        <li>📄 Reporte premium descargable</li>
                     </ul>
                 </div>
             </div>
@@ -906,6 +879,7 @@ function mostrarMensajePremium() {
     `;
 }
 
+/************ PUNTO 5: PANEL DE DONACIONES CON Bs ************/
 function mostrarPanelDonaciones() {
     return `
         <div class="donacion-box" style="
@@ -918,7 +892,7 @@ function mostrarPanelDonaciones() {
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         ">
             <h3 style="color: #2E7D32; margin-top: 0;">
-                <i class="fas fa-gift"></i> OBTÉN PREMIUM / APOYA EL PROYECTO
+                <i class="fas fa-gift"></i> OBTÉN PREMIUM - Bs ${contactoDonaciones.montoPremium}.00
             </h3>
             
             <div style="display: flex; flex-wrap: wrap; gap: 25px; align-items: center; justify-content: center;">
@@ -929,25 +903,27 @@ function mostrarPanelDonaciones() {
                              alt="QR Yape" 
                              style="width: 200px; height: 200px; border: 2px solid #ddd; border-radius: 10px;">
                     </div>
-                    <p><strong>Monto premium:</strong> S/ ${contactoDonaciones.montoPremium}.00</p>
+                    <p><strong>Monto:</strong> Bs ${contactoDonaciones.montoPremium}.00</p>
                 </div>
                 
                 <div style="flex: 1; min-width: 250px; text-align: left;">
                     <h4><i class="fas fa-list-ol"></i> PASOS PARA ACTIVAR PREMIUM:</h4>
                     <ol style="padding-left: 20px;">
-                        <li>Realiza el pago de S/ ${contactoDonaciones.montoPremium} por Yape</li>
+                        <li>Paga <strong>Bs ${contactoDonaciones.montoPremium}.00</strong> por Yape</li>
                         <li>Toma captura del comprobante</li>
                         <li>Envíalo al WhatsApp:
-                            <br><strong>${contactoDonaciones.celular}</strong>
+                            <br><a href="https://wa.me/${contactoDonaciones.celular}" target="_blank" style="color: #25D366; font-weight: bold;">
+                                ${contactoDonaciones.celular}
+                            </a>
                         </li>
                         <li>Indica tu correo:
-                            <br><em>(el que usaste en este examen)</em>
+                            <br><em>(el que usarás en el examen)</em>
                         </li>
                         <li>Te activaremos en < 24 horas</li>
                     </ol>
                     
                     <div style="margin-top: 20px;">
-                        <a href="https://wa.me/${contactoDonaciones.celular}?text=Hola%2C%20quiero%20activar%20Premium%20para%20mi%20examen" 
+                        <a href="https://wa.me/${contactoDonaciones.celular}?text=Hola%2C%20quiero%20activar%20Premium%20por%20Bs%20${contactoDonaciones.montoPremium}" 
                            target="_blank"
                            style="display: inline-block; background: #25D366; color: white; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; margin: 10px 0;">
                            <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
@@ -1018,81 +994,6 @@ function reiniciarExamenCompleto() {
     examContainer.style.display = "none";
 }
 
-/************ DESCARGAR RESULTADOS (GRATIS) ************/
-function descargarResultados() {
-    let correctasTotales = respuestasUsuario.filter(r => r.correcta).length;
-    let totalPreguntas = respuestasUsuario.length;
-    let notaFinal = totalPreguntas > 0 ? (correctasTotales / totalPreguntas * 100).toFixed(2) : "0.00";
-
-    let contenido = `
-SIMULADOR DE EXAMEN - RESULTADOS BÁSICOS
-========================================
-Fecha: ${new Date().toLocaleDateString()}
-Hora: ${new Date().toLocaleTimeString()}
-Nota Final: ${notaFinal}/100
-Correctas: ${correctasTotales} de ${totalPreguntas}
-Tiempo restante: ${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}
-Versión: GRATIS (sin respuestas correctas)
-
-RESULTADOS POR SECCIÓN:
-`;
-
-    // Calcular resultados por sección
-    let secciones = {};
-    respuestasUsuario.forEach(r => {
-        if (!secciones[r.categoria]) secciones[r.categoria] = { correctas: 0, total: 0 };
-        secciones[r.categoria].total++;
-        if (r.correcta) secciones[r.categoria].correctas++;
-    });
-
-    Object.keys(secciones).forEach(sec => {
-        const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
-        contenido += `
-${sec}:
-  Correctas: ${secciones[sec].correctas} de ${secciones[sec].total}
-  Porcentaje: ${porcentaje}%
-`;
-    });
-
-    contenido += `
-
-INFORMACIÓN PREMIUM:
-====================
-Para ver las respuestas correctas y análisis detallado:
-- Pago: S/ ${contactoDonaciones.montoPremium} por Yape
-- WhatsApp: ${contactoDonaciones.celular}
-- Correo: ${contactoDonaciones.correoContacto}
-
-DETALLE DE RESPUESTAS (solo correctas/incorrectas):
-`;
-
-    respuestasUsuario.forEach((r, index) => {
-        const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ?
-            r.opciones[r.seleccion] : "No registrada";
-        const esCorrecta = r.correcta;
-
-        contenido += `
-${index + 1}. ${r.categoria} - ${r.subcategoria || ""}
-   Estado: ${esCorrecta ? "CORRECTA" : "INCORRECTA"}
-   Tu respuesta: ${textoSeleccionado}
-   ${!esCorrecta ? `Respuesta correcta: [BLOQUEADA - SOLO PREMIUM]` : ''}
-`;
-    });
-
-    // Crear y descargar archivo
-    const blob = new Blob([contenido], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `resultados_examen_${new Date().toISOString().slice(0, 10)}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    alert("Resultados básicos descargados. ¡Obtén Premium para ver respuestas correctas!");
-}
-
 /************ DESCARGAR RESULTADOS PREMIUM ************/
 function descargarResultadosPremium() {
     let correctasTotales = respuestasUsuario.filter(r => r.correcta).length;
@@ -1100,8 +1001,8 @@ function descargarResultadosPremium() {
     let notaFinal = totalPreguntas > 0 ? (correctasTotales / totalPreguntas * 100).toFixed(2) : "0.00";
 
     let contenido = `
-SIMULADOR DE EXAMEN - REPORTE PREMIUM COMPLETO
-===============================================
+EXAMEN SIMULADOR - REPORTE PREMIUM COMPLETO
+===========================================
 Fecha: ${new Date().toLocaleDateString()}
 Hora: ${new Date().toLocaleTimeString()}
 Nota Final: ${notaFinal}/100
