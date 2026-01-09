@@ -25,6 +25,21 @@ let conocimientosIndex = 0;
 let socioemocionalesSeleccionadas = [];
 let socioIndex = 0;
 
+/************ SISTEMA PREMIUM ************/
+let isPremium = false;
+const correosPremium = [
+    "yerzinsinka7@gmail.com",
+    "admin@examen.com"
+];
+
+/************ DATOS DE DONACIONES ************/
+const contactoDonaciones = {
+    yapeQR: "https://i.ibb.co/mF99V38X/Whats-App-Image-2026-01-09-at-2-06-26-PM.jpg",
+    celular: "51977247092",
+    montoPremium: 15,
+    correoContacto: "yerzinsinka7@gmail.com"
+};
+
 /************ ELEMENTOS HTML ************/
 const startBtn = document.getElementById("startBtn");
 const timer = document.getElementById("timer");
@@ -62,7 +77,7 @@ cargarLecturas();
 /************ INICIAR EXAMEN ************/
 startBtn.addEventListener("click", () => {
     if (timerInterval !== null) return;
-    
+
     // Verificar que las lecturas y preguntas estén cargadas
     if (lecturas.length === 0 || preguntas.length === 0) {
         alert("Esperando a que carguen las preguntas y lecturas. Por favor, intenta de nuevo.");
@@ -85,6 +100,7 @@ startBtn.addEventListener("click", () => {
     conocimientosIndex = 0;
     socioemocionalesSeleccionadas = [];
     socioIndex = 0;
+    isPremium = false; // Reiniciar premium para cada examen
 
     seleccionarLecturasAleatorias();
     mostrarLectura(lecturasSeleccionadas[0]);
@@ -111,16 +127,16 @@ function actualizarTimer() {
 function seleccionarLecturasAleatorias() {
     // Crear copia del array de lecturas para no modificar el original
     const copiaLecturas = [...lecturas];
-    
+
     // Mezclar aleatoriamente las lecturas
     for (let i = copiaLecturas.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [copiaLecturas[i], copiaLecturas[j]] = [copiaLecturas[j], copiaLecturas[i]];
     }
-    
+
     // Seleccionar las primeras 3 lecturas
     lecturasSeleccionadas = copiaLecturas.slice(0, 3);
-    
+
     console.log("Lecturas seleccionadas aleatoriamente:", lecturasSeleccionadas.map(l => l.id));
 }
 
@@ -151,20 +167,20 @@ function mostrarLectura(lectura) {
 function obtenerPreguntasDeLectura(idLectura) {
     // Filtrar preguntas por subcategoría (id de la lectura)
     const preguntasFiltradas = preguntas.filter(p => p.subcategoria === idLectura);
-    
+
     // Verificar que hay preguntas disponibles
     if (preguntasFiltradas.length === 0) {
         console.warn(`No hay preguntas para la lectura ${idLectura}`);
         return [];
     }
-    
+
     // Mezclar aleatoriamente las preguntas
     const preguntasMezcladas = [...preguntasFiltradas];
     for (let i = preguntasMezcladas.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [preguntasMezcladas[i], preguntasMezcladas[j]] = [preguntasMezcladas[j], preguntasMezcladas[i]];
     }
-    
+
     // Tomar 12 preguntas aleatorias (o menos si no hay suficientes)
     const cantidadPreguntas = Math.min(12, preguntasMezcladas.length);
     return preguntasMezcladas.slice(0, cantidadPreguntas);
@@ -176,18 +192,18 @@ function comenzarPreguntasLectura() {
         console.error("No hay lectura actual seleccionada");
         return;
     }
-    
+
     preguntasLecturaActual = obtenerPreguntasDeLectura(
         lecturasSeleccionadas[lecturaActual].id
     );
-    
+
     // Verificar que se obtuvieron preguntas
     if (preguntasLecturaActual.length === 0) {
         alert(`No hay preguntas disponibles para esta lectura. Pasando a la siguiente...`);
         siguienteLectura();
         return;
     }
-    
+
     console.log(`Preguntas para lectura ${lecturaActual + 1}: ${preguntasLecturaActual.length} preguntas`);
     preguntaLecturaIndex = 0;
     mostrarPreguntaLectura();
@@ -286,26 +302,26 @@ function seleccionarRazonamientoAleatorio() {
 
     // Combinar todas las preguntas
     razonamientoSeleccionado = [...patrones, ...logica, ...resolucion];
-    
+
     // Mezclar el orden de las preguntas de razonamiento
     for (let i = razonamientoSeleccionado.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [razonamientoSeleccionado[i], razonamientoSeleccionado[j]] = [razonamientoSeleccionado[j], razonamientoSeleccionado[i]];
     }
-    
+
     razonamientoIndex = 0;
 }
 
 /************ FUNCIÓN AUXILIAR PARA MEZCLAR Y SELECCIONAR PREGUNTAS ************/
 function mezclarPreguntas(arrayPreguntas, cantidad) {
     if (arrayPreguntas.length === 0) return [];
-    
+
     const mezcladas = [...arrayPreguntas];
     for (let i = mezcladas.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [mezcladas[i], mezcladas[j]] = [mezcladas[j], mezcladas[i]];
     }
-    
+
     return mezcladas.slice(0, Math.min(cantidad, mezcladas.length));
 }
 
@@ -383,7 +399,7 @@ function responderRazonamiento(indexSeleccionado, opciones, categoria, subcatego
 
 /************ CONOCIMIENTOS GENERALES (ALEATORIOS) ************/
 function obtenerPreguntasPorMateria(materia, cantidad) {
-    const preguntasMateria = preguntas.filter(p => 
+    const preguntasMateria = preguntas.filter(p =>
         p.categoria === "Conocimientos Generales" && p.materia === materia
     );
     return mezclarPreguntas(preguntasMateria, cantidad);
@@ -402,13 +418,13 @@ function seleccionarConocimientosAleatorios() {
         ...obtenerPreguntasPorMateria("biologia", 2),
         ...obtenerPreguntasPorMateria("tecnologia", 2)
     ];
-    
+
     // Mezclar todas las preguntas de conocimientos
     for (let i = conocimientosSeleccionados.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [conocimientosSeleccionados[i], conocimientosSeleccionados[j]] = [conocimientosSeleccionados[j], conocimientosSeleccionados[i]];
     }
-    
+
     conocimientosIndex = 0;
 }
 
@@ -485,10 +501,10 @@ function responderConocimientos(indexSeleccionado, opciones, categoria, materia,
 
 /************ HABILIDADES SOCIOEMOCIONALES (ALEATORIAS) ************/
 function seleccionarSocioemocionalesAleatorias() {
-    const preguntasSocio = preguntas.filter(p => 
+    const preguntasSocio = preguntas.filter(p =>
         p.categoria.toLowerCase() === "habilidades socioemocionales"
     );
-    
+
     socioemocionalesSeleccionadas = mezclarPreguntas(preguntasSocio, 2);
     socioIndex = 0;
 }
@@ -567,22 +583,35 @@ function responderSocioemocional(indexSeleccionado, opciones, preguntaCompleta) 
     }
 }
 
-/************ FINALIZAR EXAMEN ************/
+/************ FINALIZAR EXAMEN CON PREMIUM ************/
 function finishExam() {
     clearInterval(timerInterval);
-    
+
+    // PEDIR CORREO PARA PREMIUM
+    const email = prompt(
+        "📧 ACCESO PREMIUM\n\n" +
+        "Si tienes acceso premium, ingresa tu correo registrado.\n" +
+        "Si no, deja vacío y obtendrás resultados básicos.\n\n" +
+        "Correo:"
+    );
+
+    if (email && correosPremium.includes(email.trim())) {
+        isPremium = true;
+        alert("✅ ¡Acceso premium activado! Verás resultados completos.");
+    }
+
     timer.style.color = "#e74c3c";
     timer.style.animation = "pulse 1s infinite";
 
     let correctasTotales = respuestasUsuario.filter(r => r.correcta).length;
     let totalPreguntas = respuestasUsuario.length;
     let notaFinal = totalPreguntas > 0 ? (correctasTotales / totalPreguntas * 100).toFixed(2) : "0.00";
-    
+
     let notaColor = "#e74c3c";
     if (parseFloat(notaFinal) >= 60) notaColor = "#f39c12";
     if (parseFloat(notaFinal) >= 70) notaColor = "#3498db";
     if (parseFloat(notaFinal) >= 80) notaColor = "#2ecc71";
-    
+
     let secciones = {};
     respuestasUsuario.forEach(r => {
         if (!secciones[r.categoria]) secciones[r.categoria] = { correctas: 0, total: 0 };
@@ -590,13 +619,23 @@ function finishExam() {
         if (r.correcta) secciones[r.categoria].correctas++;
     });
 
+    // MOSTRAR RESULTADOS SEGÚN PREMIUM
+    if (isPremium) {
+        mostrarResultadosPremium(notaFinal, notaColor, correctasTotales, totalPreguntas, secciones);
+    } else {
+        mostrarResultadosGratis(notaFinal, notaColor, correctasTotales, totalPreguntas, secciones);
+    }
+}
+
+/************ MOSTRAR RESULTADOS GRATIS ************/
+function mostrarResultadosGratis(notaFinal, notaColor, correctasTotales, totalPreguntas, secciones) {
     examContainer.innerHTML = `
         <div class="results-summary">
             <h2><i class="fas fa-trophy"></i> ¡Examen Finalizado!</h2>
             <div class="final-score" style="color: ${notaColor};">${notaFinal}</div>
             <p style="font-size: 1.2rem; margin-bottom: 10px;">Nota Final / 100</p>
             <p><strong>${correctasTotales}</strong> respuestas correctas de <strong>${totalPreguntas}</strong> preguntas</p>
-            <p style="margin-top: 10px;"><i class="fas fa-clock"></i> Tiempo restante: ${Math.floor(totalTime/60)}:${(totalTime%60).toString().padStart(2,'0')}</p>
+            <p style="margin-top: 10px;"><i class="fas fa-clock"></i> Tiempo restante: ${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}</p>
         </div>
 
         <h3 style="text-align: center; margin: 40px 0 20px; color: #2c3e50;">
@@ -605,13 +644,13 @@ function finishExam() {
         
         <div class="section-stats">
             ${Object.keys(secciones).map(sec => {
-                const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
-                let colorBarra = "#e74c3c";
-                if (porcentaje >= 60) colorBarra = "#f39c12";
-                if (porcentaje >= 70) colorBarra = "#3498db";
-                if (porcentaje >= 80) colorBarra = "#2ecc71";
-                
-                return `
+        const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
+        let colorBarra = "#e74c3c";
+        if (porcentaje >= 60) colorBarra = "#f39c12";
+        if (porcentaje >= 70) colorBarra = "#3498db";
+        if (porcentaje >= 80) colorBarra = "#2ecc71";
+
+        return `
                 <div class="stat-card">
                     <h3>${sec}</h3>
                     <div class="score">${secciones[sec].correctas}/${secciones[sec].total}</div>
@@ -621,14 +660,17 @@ function finishExam() {
                     </div>
                 </div>
                 `;
-            }).join("")}
+    }).join("")}
         </div>
 
         <button onclick="mostrarDetalleRespuestas()" class="details-toggle" id="toggleDetails">
-            <i class="fas fa-eye"></i> Ver detalle de respuestas
+            <i class="fas fa-eye"></i> Ver detalle de respuestas (solo nota)
         </button>
         
         <div id="detalleRespuestas" style="display: none;"></div>
+        
+        <!-- PANEL DE PREMIUM PARA USUARIOS GRATIS -->
+        ${mostrarMensajePremium()}
         
         <div class="action-buttons">
             <button onclick="reiniciarExamenCompleto()" class="action-btn restart-btn">
@@ -641,11 +683,76 @@ function finishExam() {
     `;
 }
 
-/************ MOSTRAR DETALLE DE RESPUESTAS ************/
+/************ MOSTRAR RESULTADOS PREMIUM ************/
+function mostrarResultadosPremium(notaFinal, notaColor, correctasTotales, totalPreguntas, secciones) {
+    examContainer.innerHTML = `
+        <div class="results-summary">
+            <h2><i class="fas fa-crown"></i> ¡Examen Finalizado - VERSIÓN PREMIUM!</h2>
+            <div class="final-score" style="color: ${notaColor}; border: 3px solid #FFD700;">${notaFinal}</div>
+            <p style="font-size: 1.2rem; margin-bottom: 10px;">Nota Final / 100</p>
+            <p><strong>${correctasTotales}</strong> respuestas correctas de <strong>${totalPreguntas}</strong> preguntas</p>
+            <p style="margin-top: 10px;"><i class="fas fa-clock"></i> Tiempo restante: ${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}</p>
+        </div>
+
+        <h3 style="text-align: center; margin: 40px 0 20px; color: #2c3e50;">
+            <i class="fas fa-chart-bar"></i> Resultados por Sección - ANÁLISIS COMPLETO
+        </h3>
+        
+        <div class="section-stats">
+            ${Object.keys(secciones).map(sec => {
+        const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
+        let colorBarra = "#e74c3c";
+        if (porcentaje >= 60) colorBarra = "#f39c12";
+        if (porcentaje >= 70) colorBarra = "#3498db";
+        if (porcentaje >= 80) colorBarra = "#2ecc71";
+
+        // Para premium, añadimos estadísticas detalladas
+        const preguntasSeccion = respuestasUsuario.filter(r => r.categoria === sec);
+        const errores = preguntasSeccion.filter(r => !r.correcta).length;
+
+        return `
+                <div class="stat-card" style="border: 2px solid #4CAF50;">
+                    <h3>${sec} <span style="color: #4CAF50; font-size: 0.8em;">(PREMIUM)</span></h3>
+                    <div class="score">${secciones[sec].correctas}/${secciones[sec].total}</div>
+                    <div class="percentage">${porcentaje}% de acierto</div>
+                    <div class="progress-bar" style="margin-top: 15px; height: 8px;">
+                        <div class="progress-fill" style="width: ${porcentaje}%; background: ${colorBarra}"></div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        <div>✅ Correctas: ${secciones[sec].correctas}</div>
+                        <div>❌ Errores: ${errores}</div>
+                        <div>📊 Efectividad: ${porcentaje}%</div>
+                    </div>
+                </div>
+                `;
+    }).join("")}
+        </div>
+
+        <button onclick="mostrarDetalleRespuestasPremium()" class="details-toggle" style="background: #4CAF50; color: white;">
+            <i class="fas fa-eye"></i> Ver análisis detallado PREMIUM
+        </button>
+        
+        <div id="detalleRespuestasPremium" style="display: none;"></div>
+        
+        <!-- AGRADECIMIENTO PREMIUM -->
+        ${mostrarAgradecimientoPremium()}
+        
+        <div class="action-buttons">
+            <button onclick="reiniciarExamenCompleto()" class="action-btn restart-btn">
+                <i class="fas fa-redo"></i> Reiniciar Examen
+            </button>
+            <button onclick="descargarResultadosPremium()" class="action-btn download-btn" style="background: #9C27B0;">
+                <i class="fas fa-download"></i> Descargar Reporte Premium
+            </button>
+        </div>
+    `;
+}
+
+/************ MOSTRAR DETALLE DE RESPUESTAS (GRATIS) ************/
 function mostrarDetalleRespuestas() {
     const detalleDiv = document.getElementById("detalleRespuestas");
     const toggleBtn = document.getElementById("toggleDetails");
-    
+
     if (detalleDiv.style.display === "none") {
         detalleDiv.innerHTML = `
             <h3 style="text-align: center; margin: 40px 0 20px; color: #2c3e50;">
@@ -653,14 +760,60 @@ function mostrarDetalleRespuestas() {
             </h3>
             <div class="details-container">
                 ${respuestasUsuario.map((r, index) => {
-                    const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ? 
-                        r.opciones[r.seleccion] : "No registrada";
-                    const opcionCorrecta = r.opciones ? 
-                        r.opciones[r.indiceCorrectoOriginal] || "No encontrada" : "No disponible";
-                    const esCorrecta = r.correcta;
-                    
-                    return `
+            const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ?
+                r.opciones[r.seleccion] : "No registrada";
+            const esCorrecta = r.correcta;
+
+            return `
                     <div class="answer-item ${esCorrecta ? 'correct' : 'incorrect'}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <strong style="font-size: 1.1rem;">Pregunta ${index + 1}: ${r.categoria}</strong>
+                            <span style="font-weight: bold; color: ${esCorrecta ? '#27ae60' : '#c0392b'}">
+                                ${esCorrecta ? '✓ Correcta' : '✗ Incorrecta'}
+                            </span>
+                        </div>
+                        <p><strong>Área:</strong> ${r.subcategoria || r.materia || "Sin categoría"}</p>
+                        <p><strong>Tu respuesta:</strong> ${textoSeleccionado}</p>
+                        ${!esCorrecta ? `<p style="margin-top: 5px; color: #c0392b;"><strong>🔒 Respuesta correcta bloqueada</strong> (solo disponible en versión Premium)</p>` : ''}
+                    </div>
+                    `;
+        }).join("")}
+            </div>
+        `;
+        detalleDiv.style.display = "block";
+        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar detalle de respuestas';
+        toggleBtn.style.background = "#667eea";
+        toggleBtn.style.color = "white";
+    } else {
+        detalleDiv.style.display = "none";
+        toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Ver detalle de respuestas (solo nota)';
+        toggleBtn.style.background = "transparent";
+        toggleBtn.style.color = "#667eea";
+    }
+}
+
+/************ MOSTRAR DETALLE DE RESPUESTAS PREMIUM ************/
+function mostrarDetalleRespuestasPremium() {
+    const detalleDiv = document.getElementById("detalleRespuestasPremium");
+    const toggleBtn = document.querySelector('.details-toggle[style*="background: #4CAF50"]');
+
+    if (!detalleDiv) return;
+
+    if (detalleDiv.style.display === "none") {
+        detalleDiv.innerHTML = `
+            <h3 style="text-align: center; margin: 40px 0 20px; color: #2c3e50;">
+                <i class="fas fa-list-check"></i> ANÁLISIS PREMIUM COMPLETO (${respuestasUsuario.length} preguntas)
+            </h3>
+            <div class="details-container">
+                ${respuestasUsuario.map((r, index) => {
+            const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ?
+                r.opciones[r.seleccion] : "No registrada";
+            const opcionCorrecta = r.opciones ?
+                r.opciones[r.indiceCorrectoOriginal] || "No encontrada" : "No disponible";
+            const esCorrecta = r.correcta;
+
+            return `
+                    <div class="answer-item ${esCorrecta ? 'correct' : 'incorrect'}" style="${!esCorrecta ? 'border-left: 5px solid #e74c3c;' : ''}">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                             <strong style="font-size: 1.1rem;">Pregunta ${index + 1}: ${r.categoria}</strong>
                             <span style="font-weight: bold; color: ${esCorrecta ? '#27ae60' : '#c0392b'}">
@@ -670,22 +823,164 @@ function mostrarDetalleRespuestas() {
                         <p><strong>Área:</strong> ${r.subcategoria || r.materia || "Sin categoría"}</p>
                         <p><strong>Enunciado:</strong> ${r.pregunta || "Sin texto"}</p>
                         <p style="margin-top: 10px;"><strong>Tu respuesta:</strong> ${textoSeleccionado}</p>
-                        ${!esCorrecta ? `<p style="margin-top: 5px;"><strong>Respuesta correcta:</strong> ${opcionCorrecta}</p>` : ''}
+                        ${!esCorrecta ? `
+                            <p style="margin-top: 5px;"><strong>✅ Respuesta correcta:</strong> ${opcionCorrecta}</p>
+                            <p style="margin-top: 5px; color: #e74c3c;"><strong>📌 Análisis:</strong> Revisa este tema para mejorar tu puntaje</p>
+                        ` : ''}
+                        <div style="margin-top: 10px; padding: 10px; background: ${esCorrecta ? '#E8F5E9' : '#FFEBEE'}; border-radius: 5px;">
+                            <small><strong>Materia:</strong> ${r.subcategoria || r.materia || "General"} | <strong>ID:</strong> ${r.preguntaId || "N/A"}</small>
+                        </div>
                     </div>
                     `;
-                }).join("")}
+        }).join("")}
+            </div>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #E3F2FD; border-radius: 10px;">
+                <h4><i class="fasfa-chart-line"></i> ESTADÍSTICAS AVANZADAS PREMIUM</h4>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #2E7D32;">${respuestasUsuario.filter(r => r.correcta).length}</div>
+                        <div>Preguntas correctas</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #C62828;">${respuestasUsuario.filter(r => !r.correcta).length}</div>
+                        <div>Preguntas incorrectas</div>
+                    </div>
+                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #1565C0;">${((respuestasUsuario.filter(r => r.correcta).length / respuestasUsuario.length) * 100).toFixed(1)}%</div>
+                        <div>Efectividad total</div>
+                    </div>
+                </div>
             </div>
         `;
         detalleDiv.style.display = "block";
-        toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar detalle de respuestas';
-        toggleBtn.style.background = "#667eea";
-        toggleBtn.style.color = "white";
+        if (toggleBtn) {
+            toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar análisis premium';
+        }
     } else {
         detalleDiv.style.display = "none";
-        toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Ver detalle de respuestas';
-        toggleBtn.style.background = "transparent";
-        toggleBtn.style.color = "#667eea";
+        if (toggleBtn) {
+            toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Ver análisis detallado PREMIUM';
+        }
     }
+}
+
+/************ FUNCIONES PREMIUM ************/
+function mostrarMensajePremium() {
+    return `
+        <div class="premium-box" style="
+            border: 2px solid #FF9800;
+            background: #FFF8E1;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+        ">
+            <h3 style="color: #EF6C00; margin-top: 0;"><i class="fas fa-crown"></i> FUNCIONES PREMIUM BLOQUEADAS</h3>
+            
+            <p>Para desbloquear el análisis completo de tu examen:</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div style="background: white; padding: 15px; border-radius: 10px;">
+                    <strong>✅ Lo que ves ahora (GRATIS):</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Nota final</li>
+                        <li>Resumen general por sección</li>
+                        <li>Correctas/Incorrectas (sin detalles)</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #F1F8E9; padding: 15px; border-radius: 10px;">
+                    <strong>💎 Lo que obtienes con PREMIUM (S/ ${contactoDonaciones.montoPremium}):</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Respuestas correctas detalladas</li>
+                        <li>Tus errores con explicación</li>
+                        <li>Estadísticas por área avanzadas</li>
+                        <li>Análisis de efectividad</li>
+                        <li>Reporte premium descargable</li>
+                    </ul>
+                </div>
+            </div>
+            
+            ${mostrarPanelDonaciones()}
+        </div>
+    `;
+}
+
+function mostrarPanelDonaciones() {
+    return `
+        <div class="donacion-box" style="
+            border: 2px solid #4CAF50;
+            background: #f0fff4;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        ">
+            <h3 style="color: #2E7D32; margin-top: 0;">
+                <i class="fas fa-gift"></i> OBTÉN PREMIUM / APOYA EL PROYECTO
+            </h3>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 25px; align-items: center; justify-content: center;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h4><i class="fas fa-qrcode"></i> VÍA YAPE:</h4>
+                    <div style="background: white; padding: 15px; border-radius: 10px; display: inline-block; margin: 10px 0;">
+                        <img src="${contactoDonaciones.yapeQR}" 
+                             alt="QR Yape" 
+                             style="width: 200px; height: 200px; border: 2px solid #ddd; border-radius: 10px;">
+                    </div>
+                    <p><strong>Monto premium:</strong> S/ ${contactoDonaciones.montoPremium}.00</p>
+                </div>
+                
+                <div style="flex: 1; min-width: 250px; text-align: left;">
+                    <h4><i class="fas fa-list-ol"></i> PASOS PARA ACTIVAR PREMIUM:</h4>
+                    <ol style="padding-left: 20px;">
+                        <li>Realiza el pago de S/ ${contactoDonaciones.montoPremium} por Yape</li>
+                        <li>Toma captura del comprobante</li>
+                        <li>Envíalo al WhatsApp:
+                            <br><strong>${contactoDonaciones.celular}</strong>
+                        </li>
+                        <li>Indica tu correo:
+                            <br><em>(el que usaste en este examen)</em>
+                        </li>
+                        <li>Te activaremos en < 24 horas</li>
+                    </ol>
+                    
+                    <div style="margin-top: 20px;">
+                        <a href="https://wa.me/${contactoDonaciones.celular}?text=Hola%2C%20quiero%20activar%20Premium%20para%20mi%20examen" 
+                           target="_blank"
+                           style="display: inline-block; background: #25D366; color: white; padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: bold; margin: 10px 0;">
+                           <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="margin-top: 20px; color: #666; font-size: 14px;">
+                <i class="fas fa-info-circle"></i> <em>Tu apoyo mantiene vivo este proyecto educativo. ¡Gracias!</em>
+            </p>
+        </div>
+    `;
+}
+
+function mostrarAgradecimientoPremium() {
+    return `
+        <div style="
+            border: 3px solid #9C27B0;
+            background: #F3E5F5;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 30px 0;
+            text-align: center;
+        ">
+            <h3 style="color: #7B1FA2; margin-top: 0;"><i class="fas fa-star"></i> ¡GRACIAS POR SER PREMIUM!</h3>
+            <p>Tu acceso está activo. Si deseas apoyar adicionalmente el proyecto o compartir con un amigo:</p>
+            
+            <div style="margin: 20px 0;">
+                ${mostrarPanelDonaciones()}
+            </div>
+        </div>
+    `;
 }
 
 /************ REINICIAR EXAMEN COMPLETO ************/
@@ -693,54 +988,55 @@ function reiniciarExamenCompleto() {
     // Reiniciar todas las variables
     totalTime = 120 * 60;
     timerInterval = null;
-    
+
     lecturasSeleccionadas = [];
     lecturaActual = 0;
     preguntasLecturaActual = [];
     preguntaLecturaIndex = 0;
-    
+
     respuestasUsuario = [];
-    
+
     razonamientoSeleccionado = [];
     razonamientoIndex = 0;
-    
+
     conocimientosSeleccionados = [];
     conocimientosIndex = 0;
-    
+
     socioemocionalesSeleccionadas = [];
     socioIndex = 0;
-    
+
     // Resetear timer display
     timer.textContent = "Tiempo: 120:00";
     timer.style.color = "white";
     timer.style.animation = "none";
-    
+
     // Resetear botón de inicio
     startBtn.disabled = false;
     startBtn.innerHTML = '<i class="fas fa-play-circle"></i> Iniciar Examen';
-    
+
     // Ocultar exam container
     examContainer.style.display = "none";
 }
 
-/************ DESCARGAR RESULTADOS ************/
+/************ DESCARGAR RESULTADOS (GRATIS) ************/
 function descargarResultados() {
     let correctasTotales = respuestasUsuario.filter(r => r.correcta).length;
     let totalPreguntas = respuestasUsuario.length;
     let notaFinal = totalPreguntas > 0 ? (correctasTotales / totalPreguntas * 100).toFixed(2) : "0.00";
-    
+
     let contenido = `
-SIMULADOR DE EXAMEN - RESULTADOS
-================================
+SIMULADOR DE EXAMEN - RESULTADOS BÁSICOS
+========================================
 Fecha: ${new Date().toLocaleDateString()}
 Hora: ${new Date().toLocaleTimeString()}
 Nota Final: ${notaFinal}/100
 Correctas: ${correctasTotales} de ${totalPreguntas}
-Tiempo restante: ${Math.floor(totalTime/60)}:${(totalTime%60).toString().padStart(2,'0')}
+Tiempo restante: ${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}
+Versión: GRATIS (sin respuestas correctas)
 
 RESULTADOS POR SECCIÓN:
 `;
-    
+
     // Calcular resultados por sección
     let secciones = {};
     respuestasUsuario.forEach(r => {
@@ -748,7 +1044,7 @@ RESULTADOS POR SECCIÓN:
         secciones[r.categoria].total++;
         if (r.correcta) secciones[r.categoria].correctas++;
     });
-    
+
     Object.keys(secciones).forEach(sec => {
         const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
         contenido += `
@@ -757,37 +1053,148 @@ ${sec}:
   Porcentaje: ${porcentaje}%
 `;
     });
-    
+
     contenido += `
 
-DETALLE DE RESPUESTAS:
+INFORMACIÓN PREMIUM:
+====================
+Para ver las respuestas correctas y análisis detallado:
+- Pago: S/ ${contactoDonaciones.montoPremium} por Yape
+- WhatsApp: ${contactoDonaciones.celular}
+- Correo: ${contactoDonaciones.correoContacto}
+
+DETALLE DE RESPUESTAS (solo correctas/incorrectas):
 `;
-    
+
     respuestasUsuario.forEach((r, index) => {
-        const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ? 
+        const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ?
             r.opciones[r.seleccion] : "No registrada";
-        const opcionCorrecta = r.opciones ? 
-            r.opciones[r.indiceCorrectoOriginal] || "No encontrada" : "No disponible";
         const esCorrecta = r.correcta;
-        
+
         contenido += `
 ${index + 1}. ${r.categoria} - ${r.subcategoria || ""}
    Estado: ${esCorrecta ? "CORRECTA" : "INCORRECTA"}
    Tu respuesta: ${textoSeleccionado}
-   ${!esCorrecta ? `Respuesta correcta: ${opcionCorrecta}` : ''}
+   ${!esCorrecta ? `Respuesta correcta: [BLOQUEADA - SOLO PREMIUM]` : ''}
 `;
     });
-    
+
     // Crear y descargar archivo
     const blob = new Blob([contenido], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `resultados_examen_${new Date().toISOString().slice(0,10)}.txt`;
+    a.download = `resultados_examen_${new Date().toISOString().slice(0, 10)}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    
-    alert("Resultados descargados correctamente");
+
+    alert("Resultados básicos descargados. ¡Obtén Premium para ver respuestas correctas!");
+}
+
+/************ DESCARGAR RESULTADOS PREMIUM ************/
+function descargarResultadosPremium() {
+    let correctasTotales = respuestasUsuario.filter(r => r.correcta).length;
+    let totalPreguntas = respuestasUsuario.length;
+    let notaFinal = totalPreguntas > 0 ? (correctasTotales / totalPreguntas * 100).toFixed(2) : "0.00";
+
+    let contenido = `
+SIMULADOR DE EXAMEN - REPORTE PREMIUM COMPLETO
+===============================================
+Fecha: ${new Date().toLocaleDateString()}
+Hora: ${new Date().toLocaleTimeString()}
+Nota Final: ${notaFinal}/100
+Correctas: ${correctasTotales} de ${totalPreguntas}
+Tiempo restante: ${Math.floor(totalTime / 60)}:${(totalTime % 60).toString().padStart(2, '0')}
+Versión: PREMIUM (acceso completo)
+
+RESULTADOS POR SECCIÓN:
+`;
+
+    // Calcular resultados por sección
+    let secciones = {};
+    respuestasUsuario.forEach(r => {
+        if (!secciones[r.categoria]) secciones[r.categoria] = { correctas: 0, total: 0 };
+        secciones[r.categoria].total++;
+        if (r.correcta) secciones[r.categoria].correctas++;
+    });
+
+    Object.keys(secciones).forEach(sec => {
+        const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
+        const preguntasSeccion = respuestasUsuario.filter(r => r.categoria === sec);
+        const errores = preguntasSeccion.filter(r => !r.correcta).length;
+
+        contenido += `
+${sec}:
+  Correctas: ${secciones[sec].correctas} de ${secciones[sec].total}
+  Errores: ${errores}
+  Porcentaje: ${porcentaje}%
+  Efectividad: ${porcentaje >= 70 ? "ALTA" : porcentaje >= 50 ? "MEDIA" : "BAJA"}
+`;
+    });
+
+    contenido += `
+
+DETALLE COMPLETO DE RESPUESTAS:
+`;
+
+    respuestasUsuario.forEach((r, index) => {
+        const textoSeleccionado = r.opciones && r.opciones[r.seleccion] ?
+            r.opciones[r.seleccion] : "No registrada";
+        const opcionCorrecta = r.opciones ?
+            r.opciones[r.indiceCorrectoOriginal] || "No encontrada" : "No disponible";
+        const esCorrecta = r.correcta;
+
+        contenido += `
+${index + 1}. ${r.categoria} - ${r.subcategoria || r.materia || ""}
+   Estado: ${esCorrecta ? "CORRECTA" : "INCORRECTA"}
+   Tu respuesta: ${textoSeleccionado}
+   ${!esCorrecta ? `Respuesta correcta: ${opcionCorrecta}` : ''}
+   ${!esCorrecta ? `Recomendación: Revisar tema de ${r.subcategoria || r.materia || "esta área"}` : ''}
+`;
+    });
+
+    contenido += `
+
+ESTADÍSTICAS AVANZADAS:
+======================
+Total preguntas: ${totalPreguntas}
+Preguntas correctas: ${correctasTotales} (${((correctasTotales / totalPreguntas) * 100).toFixed(1)}%)
+Preguntas incorrectas: ${totalPreguntas - correctasTotales} (${(((totalPreguntas - correctasTotales) / totalPreguntas) * 100).toFixed(1)}%)
+
+RECOMENDACIONES:
+`;
+
+    // Recomendaciones por sección
+    Object.keys(secciones).forEach(sec => {
+        const porcentaje = ((secciones[sec].correctas / secciones[sec].total) * 100).toFixed(1);
+        let recomendacion = "";
+        if (porcentaje < 50) {
+            recomendacion = "Necesita estudio intensivo";
+        } else if (porcentaje < 70) {
+            recomendacion = "Requiere práctica moderada";
+        } else if (porcentaje < 85) {
+            recomendacion = "Buen desempeño, puede mejorar";
+        } else {
+            recomendacion = "Excelente desempeño";
+        }
+
+        contenido += `
+- ${sec}: ${porcentaje}% - ${recomendacion}
+`;
+    });
+
+    // Crear y descargar archivo
+    const blob = new Blob([contenido], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `reporte_premium_examen_${new Date().toISOString().slice(0, 10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert("¡Reporte Premium descargado! Contiene análisis completo.");
 }
