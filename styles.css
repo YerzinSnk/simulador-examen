@@ -528,3 +528,274 @@ footer p {
     display: flex;
     align-items: center;
 }
+/* ===== ESTILOS PREMIUM ===== */
+.premium-box {
+    animation: pulse 2s infinite;
+    margin: 40px 0;
+    border-left: 5px solid #FF9800 !important;
+}
+
+.donacion-box {
+    transition: transform 0.3s ease;
+    border-left: 5px solid #4CAF50 !important;
+}
+
+.donacion-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15) !important;
+}
+
+.answer-item {
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    border-left: 5px solid #ddd;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.answer-item.correct {
+    background: linear-gradient(to right, #E8F5E9, #F1F8E9);
+    border-left-color: #2E7D32;
+    box-shadow: 0 4px 12px rgba(46, 125, 50, 0.1);
+}
+
+.answer-item.incorrect {
+    background: linear-gradient(to right, #FFEBEE, #FFEBEE);
+    border-left-color: #C62828;
+    box-shadow: 0 4px 12px rgba(198, 40, 40, 0.1);
+}
+
+.answer-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(to right, transparent 50%, rgba(255, 255, 255, 0.8) 100%);
+}
+
+.stat-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    pointer-events: none;
+}
+
+/* Botón premium especial */
+.premium-btn {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+    color: #8B4513 !important;
+    font-weight: bold;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.premium-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: 0.5s;
+}
+
+.premium-btn:hover::before {
+    left: 100%;
+}
+
+.premium-btn:hover {
+    color: #5D2906 !important;
+    box-shadow: 0 10px 30px rgba(255, 165, 0, 0.4) !important;
+}
+
+/* Estilos para el QR */
+.qr-container {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    display: inline-block;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 3px solid #4CAF50;
+}
+
+.qr-container img {
+    display: block;
+    margin: 0 auto;
+}
+
+/* Badge premium */
+.premium-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #8B4513;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    margin-left: 10px;
+    vertical-align: middle;
+    box-shadow: 0 3px 10px rgba(255, 165, 0, 0.3);
+}
+
+/* WhatsApp button */
+.whatsapp-btn {
+    background: #25D366 !important;
+    color: white !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: bold;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+
+.whatsapp-btn:hover {
+    background: #128C7E !important;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4) !important;
+}
+
+/* Estilos para las listas en premium */
+.premium-box ul {
+    list-style-type: none;
+    padding-left: 20px;
+}
+
+.premium-box ul li {
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 10px;
+}
+
+.premium-box ul li:before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+/* Animación especial para premium */
+@keyframes shine {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+}
+
+.premium-shine {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    background-size: 200px 100%;
+    animation: shine 3s infinite;
+}
+
+/* Responsive para premium */
+@media (max-width: 768px) {
+    .premium-box {
+        margin: 20px 0;
+        padding: 15px !important;
+    }
+    
+    .donacion-box > div {
+        flex-direction: column !important;
+    }
+    
+    .donacion-box img {
+        width: 180px !important;
+        height: 180px !important;
+    }
+    
+    .premium-badge {
+        display: block;
+        margin: 10px auto !important;
+        width: fit-content;
+    }
+    
+    .whatsapp-btn {
+        padding: 12px 20px !important;
+        font-size: 1rem !important;
+    }
+}
+
+/* Estilos para la nota premium */
+.final-score-premium {
+    position: relative;
+    display: inline-block;
+}
+
+.final-score-premium::after {
+    content: "⭐";
+    position: absolute;
+    top: -20px;
+    right: -30px;
+    font-size: 2rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Tooltip para elementos premium */
+.premium-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.premium-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 10px;
+    position: absolute;
+    z-index: 1000;
+    bottom: 125%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.9rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.premium-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Efecto de confeti para resultados premium */
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #FFD700;
+    opacity: 0.8;
+}
+
+/* ===== FIN ESTILOS PREMIUM ===== */
