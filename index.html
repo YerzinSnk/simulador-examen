@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Examen Completo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-chalkboard-teacher"></i> Simulador de Examen</h1>
+            <p>Preparación completa para evaluaciones estandarizadas</p>
+            
+            <div class="timer-container pulse">
+                <div id="timer">Tiempo: 120:00</div>
+            </div>
+            
+            <button id="startBtn" class="start-btn">
+                <i class="fas fa-play-circle"></i> Iniciar Examen
+            </button>
+        </div>
+        
+        <div id="examContainer" class="exam-container">
+            <!-- El contenido se genera dinámicamente con JavaScript -->
+        </div>
+        
+        <footer>
+            <p>© 2026 Simulador de Examen</p>
+            <p class="creator">Creado por Yerzin Sinka</p>
+            <div class="exam-info">
+                <span><i class="fas fa-clock"></i> Duración: 120 minutos</span>
+                <span><i class="fas fa-question-circle"></i> 100 preguntas</span>
+                <span><i class="fas fa-book"></i> 3 lecturas</span>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
