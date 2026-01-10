@@ -30,7 +30,7 @@ let isPremium = false;
 const correosPremium = [
     "yerzinsinka7@gmail.com",
     "admin@examen.com",
-    "anethcalderon@gmail.com",
+    "anethycasal@gmail.com",
 ];
 
 /************ DATOS DE DONACIONES ************/
@@ -1101,3 +1101,4 @@ RECOMENDACIONES:
     alert("¡Reporte Premium descargado! Contiene análisis completo.");
 
 }
+
