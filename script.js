@@ -29,7 +29,8 @@ let socioIndex = 0;
 let isPremium = false;
 const correosPremium = [
     "yerzinsinka7@gmail.com",
-    "admin@examen.com"
+    "admin@examen.com",
+    "anethcalderon@gmail.com",
 ];
 
 /************ DATOS DE DONACIONES ************/
@@ -1098,4 +1099,5 @@ RECOMENDACIONES:
     URL.revokeObjectURL(url);
 
     alert("¡Reporte Premium descargado! Contiene análisis completo.");
+
 }
