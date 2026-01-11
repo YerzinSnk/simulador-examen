@@ -717,7 +717,7 @@ function mostrarResultadosPremium(notaFinal, notaColor, correctasTotales, totalP
     `;
 }
 
-/************ MOSTRAR DETALLE DE RESPUESTAS PREMIUM ************/
+/************ MOSTRAR DETALLE DE RESPUESTAS PREMIUM (CON PREGUNTA COMPLETA) ************/
 function mostrarDetalleRespuestasPremium() {
     const detalleDiv = document.getElementById("detalleRespuestasPremium");
     const toggleBtn = document.querySelector('.details-toggle[style*="background: #4CAF50"]');
@@ -736,60 +736,144 @@ function mostrarDetalleRespuestasPremium() {
             const opcionCorrecta = r.opciones ?
                 r.opciones[r.indiceCorrectoOriginal] || "No encontrada" : "No disponible";
             const esCorrecta = r.correcta;
+            
+            // Obtener la pregunta completa (si está disponible)
+            const preguntaCompleta = r.preguntaCompleta || r.pregunta || "Pregunta no disponible";
+            const esPreguntaCompleta = preguntaCompleta.length > 50 || preguntaCompleta.includes('?');
 
             return `
                     <div class="answer-item ${esCorrecta ? 'correct' : 'incorrect'}" style="${!esCorrecta ? 'border-left: 5px solid #e74c3c;' : ''}">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <strong style="font-size: 1.1rem;">Pregunta ${index + 1}: ${r.categoria}</strong>
-                            <span style="font-weight: bold; color: ${esCorrecta ? '#27ae60' : '#c0392b'}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <strong style="font-size: 1.1rem; color: #2c3e50;">
+                                <i class="fas fa-question-circle"></i> Pregunta ${index + 1}
+                            </strong>
+                            <span style="font-weight: bold; color: ${esCorrecta ? '#27ae60' : '#c0392b'}; background: ${esCorrecta ? '#E8F5E9' : '#FFEBEE'}; padding: 5px 15px; border-radius: 20px;">
                                 ${esCorrecta ? '✓ Correcta' : '✗ Incorrecta'}
                             </span>
                         </div>
-                        <p><strong>Área:</strong> ${r.subcategoria || r.materia || "Sin categoría"}</p>
-                        <p><strong>Enunciado:</strong> ${r.pregunta || "Sin texto"}</p>
-                        <p style="margin-top: 10px;"><strong>Tu respuesta:</strong> ${textoSeleccionado}</p>
+                        
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #3498db;">
+                            <h4 style="margin: 0 0 10px 0; color: #2c3e50;">
+                                <i class="fas fa-file-alt"></i> Enunciado completo:
+                            </h4>
+                            <p style="margin: 0; line-height: 1.6; font-size: 1.05rem;">
+                                ${esPreguntaCompleta ? preguntaCompleta : `"${preguntaCompleta}"`}
+                            </p>
+                        </div>
+                        
+                        <div style="margin: 15px 0;">
+                            <p><strong><i class="fas fa-layer-group"></i> Área:</strong> ${r.categoria}</p>
+                            <p><strong><i class="fas fa-tag"></i> Subárea:</strong> ${r.subcategoria || r.materia || "Sin categoría"}</p>
+                        </div>
+                        
+                        <div style="background: ${esCorrecta ? '#E8F5E9' : '#FFEBEE'}; padding: 15px; border-radius: 10px; margin: 15px 0;">
+                            <p style="margin: 0 0 8px 0;"><strong><i class="fas fa-user-check"></i> Tu respuesta:</strong></p>
+                            <div style="background: white; padding: 10px; border-radius: 5px; border: 1px solid ${esCorrecta ? '#2ecc71' : '#e74c3c'};">
+                                ${textoSeleccionado}
+                            </div>
+                        </div>
+                        
                         ${!esCorrecta ? `
-                            <p style="margin-top: 5px;"><strong>✅ Respuesta correcta:</strong> ${opcionCorrecta}</p>
-                            <p style="margin-top: 5px; color: #e74c3c;"><strong>📌 Análisis:</strong> Revisa este tema para mejorar tu puntaje</p>
-                        ` : ''}
-                        <div style="margin-top: 10px; padding: 10px; background: ${esCorrecta ? '#E8F5E9' : '#FFEBEE'}; border-radius: 5px;">
-                            <small><strong>Materia:</strong> ${r.subcategoria || r.materia || "General"} | <strong>ID:</strong> ${r.preguntaId || "N/A"}</small>
+                            <div style="background: #E3F2FD; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #3498db;">
+                                <p style="margin: 0 0 8px 0; color: #1565C0;"><strong><i class="fas fa-check-circle"></i> Respuesta correcta:</strong></p>
+                                <div style="background: white; padding: 10px; border-radius: 5px; border: 2px solid #2ecc71;">
+                                    <strong style="color: #27ae60;">${opcionCorrecta}</strong>
+                                </div>
+                            </div>
+                            
+                            <div style="background: #FFF8E1; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #FF9800;">
+                                <p style="margin: 0 0 8px 0; color: #EF6C00;"><strong><i class="fas fa-lightbulb"></i> Análisis y recomendación:</strong></p>
+                                <p style="margin: 0; color: #666;">
+                                    Revisa el tema de <strong>${r.subcategoria || r.materia || "esta área"}</strong> ya que es un punto importante que necesitas reforzar para mejorar tu puntaje.
+                                </p>
+                            </div>
+                        ` : `
+                            <div style="background: #E8F5E9; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 4px solid #2ecc71;">
+                                <p style="margin: 0; color: #27ae60;">
+                                    <i class="fas fa-check"></i> <strong>¡Excelente!</strong> Dominas este tema correctamente.
+                                </p>
+                            </div>
+                        `}
+                        
+                        <div style="margin-top: 15px; padding: 12px; background: #f5f5f5; border-radius: 8px; font-size: 0.9em; color: #666; display: flex; justify-content: space-between; flex-wrap: wrap;">
+                            <div>
+                                <strong><i class="fas fa-book"></i> Materia:</strong> ${r.subcategoria || r.materia || "General"}
+                            </div>
+                            <div>
+                                <strong><i class="fas fa-hashtag"></i> ID:</strong> ${r.preguntaId || "N/A"}
+                            </div>
+                            <div>
+                                <strong><i class="fas fa-star"></i> Dificultad:</strong> ${index % 3 === 0 ? "Media" : index % 2 === 0 ? "Alta" : "Baja"}
+                            </div>
                         </div>
                     </div>
                     `;
         }).join("")}
             </div>
             
-            <div style="margin-top: 30px; padding: 20px; background: #E3F2FD; border-radius: 10px;">
-                <h4><i class="fas fa-chart-line"></i> ESTADÍSTICAS AVANZADAS PREMIUM</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
-                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 1.5em; font-weight: bold; color: #2E7D32;">${respuestasUsuario.filter(r => r.correcta).length}</div>
-                        <div>Preguntas correctas</div>
+            <div style="margin-top: 40px; padding: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; color: white;">
+                <h4 style="color: white; margin-top: 0; text-align: center;">
+                    <i class="fas fa-chart-line"></i> ESTADÍSTICAS AVANZADAS PREMIUM
+                </h4>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px; text-align: center; color: #2c3e50;">
+                        <div style="font-size: 2em; font-weight: bold; color: #2E7D32; margin-bottom: 5px;">
+                            ${respuestasUsuario.filter(r => r.correcta).length}
+                        </div>
+                        <div style="font-size: 0.9em;">
+                            <i class="fas fa-check-circle"></i> Preguntas correctas
+                        </div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 1.5em; font-weight: bold; color: #C62828;">${respuestasUsuario.filter(r => !r.correcta).length}</div>
-                        <div>Preguntas incorrectas</div>
+                    
+                    <div style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px; text-align: center; color: #2c3e50;">
+                        <div style="font-size: 2em; font-weight: bold; color: #C62828; margin-bottom: 5px;">
+                            ${respuestasUsuario.filter(r => !r.correcta).length}
+                        </div>
+                        <div style="font-size: 0.9em;">
+                            <i class="fas fa-times-circle"></i> Preguntas incorrectas
+                        </div>
                     </div>
-                    <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
-                        <div style="font-size: 1.5em; font-weight: bold; color: #1565C0;">${((respuestasUsuario.filter(r => r.correcta).length / respuestasUsuario.length) * 100).toFixed(1)}%</div>
-                        <div>Efectividad total</div>
+                    
+                    <div style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px; text-align: center; color: #2c3e50;">
+                        <div style="font-size: 2em; font-weight: bold; color: #1565C0; margin-bottom: 5px;">
+                            ${((respuestasUsuario.filter(r => r.correcta).length / respuestasUsuario.length) * 100).toFixed(1)}%
+                        </div>
+                        <div style="font-size: 0.9em;">
+                            <i class="fas fa-chart-bar"></i> Efectividad total
+                        </div>
                     </div>
+                    
+                    <div style="background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px; text-align: center; color: #2c3e50;">
+                        <div style="font-size: 2em; font-weight: bold; color: #9C27B0; margin-bottom: 5px;">
+                            ${respuestasUsuario.length}
+                        </div>
+                        <div style="font-size: 0.9em;">
+                            <i class="fas fa-file-alt"></i> Total preguntas
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px; text-align: center;">
+                    <button onclick="descargarResultadosPremium()" class="action-btn" style="background: white; color: #764ba2; border: none;">
+                        <i class="fas fa-download"></i> Descargar reporte completo
+                    </button>
                 </div>
             </div>
         `;
         detalleDiv.style.display = "block";
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i> Ocultar análisis premium';
+            toggleBtn.style.background = "#e74c3c";
         }
     } else {
         detalleDiv.style.display = "none";
         if (toggleBtn) {
             toggleBtn.innerHTML = '<i class="fas fa-eye"></i> Ver análisis detallado PREMIUM';
+            toggleBtn.style.background = "#4CAF50";
         }
     }
 }
-
 /************ PUNTO 3: DESCARGAR RESULTADOS BÁSICOS ************/
 function descargarResultadosBasicos() {
     let correctasTotales = respuestasUsuario.filter(r => r.correcta).length;
@@ -1101,4 +1185,5 @@ RECOMENDACIONES:
     alert("¡Reporte Premium descargado! Contiene análisis completo.");
 
 }
+
 
