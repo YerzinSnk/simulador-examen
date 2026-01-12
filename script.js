@@ -727,7 +727,6 @@ function mostrarResultadosPremium(notaFinal, notaColor, correctasTotales, totalP
     `;
 }
 
-/************ MOSTRAR DETALLE DE RESPUESTAS PREMIUM (CON PREGUNTA COMPLETA) ************/
 /************ MOSTRAR DETALLE DE RESPUESTAS PREMIUM (CON PREGUNTA REAL) ************/
 function mostrarDetalleRespuestasPremium() {
     const detalleDiv = document.getElementById("detalleRespuestasPremium");
@@ -749,8 +748,11 @@ function mostrarDetalleRespuestasPremium() {
                         r.opciones[r.indiceCorrectoOriginal] || "No encontrada" : "No disponible";
                     const esCorrecta = r.correcta;
                     
-                    // USAR preguntaTexto (el enunciado real) en lugar de pregunta (que era la opción)
-                    const enunciadoPregunta = r.preguntaTexto || r.pregunta || "Enunciado no disponible";
+                    // USAR preguntaTexto (el enunciado real) - CORREGIDO
+// Si preguntaTexto existe y no es vacío, úsalo. Sino, usa un texto por defecto.
+const enunciadoPregunta = (r.preguntaTexto && r.preguntaTexto.trim() !== "") ? 
+    r.preguntaTexto : 
+    `Pregunta de ${r.categoria} sobre ${r.subcategoria || r.materia || "el tema"}`;
                     
                     return `
                     <div class="answer-item ${esCorrecta ? 'correct' : 'incorrect'}" style="margin-bottom: 25px; padding: 20px; border-radius: 10px; ${!esCorrecta ? 'border-left: 5px solid #e74c3c; background: #FFF5F5;' : 'border-left: 5px solid #2ecc71; background: #F5FFF5;'}">
@@ -1168,6 +1170,7 @@ RECOMENDACIONES:
     alert("¡Reporte Premium descargado! Contiene análisis completo.");
 
 }
+
 
 
 
