@@ -32,7 +32,6 @@ const correosPremium = [
     "admin@examen.com",
     "anethycasal@gmail.com",
     "aydeemamani",
-    "luci67",
 ];
 
 /************ DATOS DE DONACIONES ************/
@@ -1172,6 +1171,7 @@ RECOMENDACIONES:
     alert("¡Reporte Premium descargado! Contiene análisis completo.");
 
 }
+
 
 
 
