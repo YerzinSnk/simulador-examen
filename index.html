@@ -19,11 +19,43 @@
             </div>
             
             <button id="startBtn" class="start-btn">
-                <i class="fas fa-play-circle"></i> Iniciar Examen
+                <i class="fas fa-play-circle"></i> Iniciar Examen Completo
             </button>
         </div>
         
-        <div id="examContainer" class="exam-container">
+        <!-- MENÚ PRINCIPAL -->
+        <div id="mainMenu" style="display: none; text-align: center; margin: 30px 0;">
+            <h2 style="color: white; margin-bottom: 20px;">🏁 Selecciona el tipo de examen</h2>
+            
+            <div class="menu-options">
+                <button onclick="cargarExamenCompleto()" class="menu-btn">
+                    <i class="fas fa-file-alt"></i> Examen Completo<br>
+                    <small>100 preguntas • 120 min</small>
+                </button>
+                
+                <button onclick="mostrarMenuLecturas()" class="menu-btn">
+                    <i class="fas fa-book-open"></i> Comprensión Lectora<br>
+                    <small>Lecturas individuales</small>
+                </button>
+                
+                <button onclick="mostrarMenuRazonamiento()" class="menu-btn">
+                    <i class="fas fa-brain"></i> Razonamiento Lógico<br>
+                    <small>Patrones, Matemática, Problemas</small>
+                </button>
+                
+                <button onclick="mostrarMenuConocimientos()" class="menu-btn">
+                    <i class="fas fa-book"></i> Conocimientos Generales<br>
+                    <small>Por materias específicas</small>
+                </button>
+                
+                <button onclick="mostrarMenuSocioemocional()" class="menu-btn">
+                    <i class="fas fa-heart"></i> Habilidades Socioemocionales<br>
+                    <small>Todas las preguntas</small>
+                </button>
+            </div>
+        </div>
+        
+        <div id="examContainer">
             <!-- El contenido se genera dinámicamente con JavaScript -->
         </div>
         
