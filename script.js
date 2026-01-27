@@ -29,7 +29,8 @@ const correosPremium = [
     "anethycasal@gmail.com",
     "aydeemamani",
     "Chelito10",
-    "15212024"
+    "15212024",
+    "1807"
 ];
 
 const contactoDonaciones = {
@@ -1315,5 +1316,6 @@ function reiniciarExamenCompleto() {
 document.addEventListener('DOMContentLoaded', function() {
     mostrarMenuPrincipal();
 });
+
 
 
